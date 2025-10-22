@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Eco Log - Sistema Integrado</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:linear-gradient(135deg,#071428,#0f2a3f);color:#e6f0f6;font-family:'Segoe UI',sans-serif;overflow:hidden}
+    .splash{position:fixed;inset:0;background:url('assets/3.jpg')center/cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;animation:splashOut 1s ease-in-out 3s forwards}
+    .splash h1{font-size:72px;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,0.6)}.splash span{font-family:'Brush Script MT',cursive;color:#ff3b46;font-size:64px;margin-left:-12px;text-shadow:0 8px 20px rgba(0,0,0,0.45)}
+    @keyframes splashOut{to{opacity:0;visibility:hidden;transform:scale(.995)}}
+    .app{display:none;height:100vh;width:100vw;padding:18px;flex-direction:column}.app.active{display:flex;animation:appAppear .8s ease}
+    @keyframes appAppear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    header{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.05);padding:12px 18px;border-radius:12px;margin-bottom:20px}
+    .logo{font-size:24px;color:#00bcd4;font-weight:bold}
+    .menu a{text-decoration:none;color:#e6f0f6;margin-left:15px}
+    .menu a:hover{color:#00bcd4}
+    main{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+    .card{background:rgba(255,255,255,0.05);padding:20px;border-radius:10px}
+    .card h2{color:#00bcd4;margin-bottom:10px}
+  </style>
+</head>
+<body>
+  <div class="splash"><h1>Eco <span>Log</span></h1></div>
+  <div class="app" id="app">
+    <header><div class="logo"><i class="fa-solid fa-leaf"></i> Eco Log</div>
+      <nav class="menu"><a href="#">Dashboard</a><a href="#">Relatórios</a><a href="#">Financeiro</a><a href="#">Sair</a></nav></header>
+    <main><div class="card"><h2>Transporte Ativo</h2><p>Monitoramento em tempo real das cargas.</p></div><div class="card"><h2>Faturamento</h2><p>Controle financeiro com relatórios automáticos.</p></div><div class="card"><h2>Portos</h2><p>Atualizações portuárias e movimentação de carga.</p></div></main>
+  </div>
+  <script>setTimeout(()=>{document.querySelector('.splash').style.display='none';document.getElementById('app').classList.add('active')},4000);</script>
+</body></html>

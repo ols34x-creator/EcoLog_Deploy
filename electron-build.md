@@ -1,0 +1,1 @@
+1) npm install\n2) npm start\n3) npm run package-win
