@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECO.SHOP - Peças e Acessórios Automotivos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #6c63ff;
+            --dark: #121212;
+            --dark-light: #1e1e1e;
+            --darker: #0a0a0a;
+            --text: #ffffff;
+            --text-muted: #b0b0b0;
+            --card-bg: #1a1a1a;
+            --border: #333333;
+            --accent: #ff3366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(to bottom, var(--darker), transparent);
+            padding: 1.5rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .logo-text p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-menu a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu a:hover::after {
+            width: 80%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            background: 
+                linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.9)),
+                url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--text), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pneus Section */
+        .pneus {
+            background: 
+                linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)),
+                url('https://images.unsplash.com/photo-1551524164-6ca64fb7aa6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Produtos Section */
+        .produtos {
+            background: 
+                linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)),
+                url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2083&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            margin-bottom: 50px;
+        }
+
+        .table-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: var(--dark);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .table-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .table-controls {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: var(--dark);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            background: var(--dark);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .category-row td {
+            background-color: #07101a;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .col-ref { width: 12%; }
+        .col-img { width: 10%; text-align: center; }
+        .col-desc { width: 58%; }
+        .col-caixa { width: 10%; }
+        .col-preco { width: 10%; }
+
+        .img-placeholder {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            color: #9aa4b2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            text-align: center;
+            border-radius: 8px;
+            margin: auto;
+        }
+
+        .product-code {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .product-desc {
+            color: var(--text);
+        }
+
+        .price {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .ipi {
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .table-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--dark-light);
+            padding: 80px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon-large {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background: 
+                linear-gradient(rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.95)),
+                url('https://images.unsplash.com/photo-1493238792000-8113da705763?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .col-ref, .col-img, .col-desc, .col-caixa, .col-preco {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">E</div>
+                    <div class="logo-text">
+                        <h1>ECO.SHOP</h1>
+                        <p>Peças e Acessórios Automotivos</p>
+                    </div>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#inicio">Início</a>
+                    <a href="#pneus">Pneus Double Coin</a>
+                    <a href="#automotivo">Produtos Automotivos</a>
+                    <a href="#vantagens">Vantagens</a>
+                    <a href="#contato">Contato</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">ECO.SHOP - Tabelas de Preços</h1>
+                <p class="hero-subtitle">Encontre as melhores peças e acessórios automotivos com preços competitivos e entrega rápida</p>
+                <div class="hero-actions">
+                    <a href="#pneus" class="btn btn-primary">Ver Pneus</a>
+                    <a href="#automotivo" class="btn btn-secondary">Ver Produtos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="vantagens">
+        <div class="container">
+            <div class="section-title">
+                <h2>Por que Escolher a ECO.SHOP?</h2>
+                <p>Conheça as vantagens de comprar conosco</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3>Entrega Rápida</h3>
+                    <p>Entregamos para todo o Brasil com prazos curtos e fretes competitivos.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Garantia de Qualidade</h3>
+                    <p>Todos os nossos produtos possuem garantia e são testados antes do envio.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Compra Segura</h3>
+                    <p>Processo de compra 100% seguro através do Mercado Livre.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Suporte Especializado</h3>
+                    <p>Nossa equipe está pronta para tirar todas as suas dúvidas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pneus Double Coin Section -->
+    <section class="pneus" id="pneus">
+        <div class="container">
+            <div class="section-title">
+                <h2>Pneus Double Coin</h2>
+                <p>Tabela de Preços - Validade: 10/2025</p>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>DOUBLE COIN</h3>
+                    <p>Tabela de Preços - Validade: 10/2025</p>
+                </div>
+                
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-pneus" placeholder="Buscar por código ou descrição...">
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="automotivo">Automotivos</button>
+                        <button class="filter-btn" data-filter="caminhao">Caminhões</button>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código/Produto</th>
+                                <th>Descrição Resumida</th>
+                                <th>PU Saída</th>
+                                <th>IPI (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-category="automotivo">
+                                <td class="product-code">175/75R13 85T DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 175/75R13...</td>
+                                <td class="price">R$ 264,79</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">175/75R14 86T DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 175/75R14...</td>
+                                <td class="price">R$ 279,38</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">185/60R15 84H DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 185/60R15...</td>
+                                <td class="price">R$ 291,72</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">185/65R15 88H DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 185/65R15...</td>
+                                <td class="price">R$ 299,57</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">195/55R15 85V DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 195/55R15...</td>
+                                <td class="price">R$ 301,82</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">195/60R15 88H DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 195/60R15...</td>
+                                <td class="price">R$ 305,18</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">195/60R16 89H DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 195/60R16...</td>
+                                <td class="price">R$ 320,89</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">195/65R15 91V DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 195/65R15...</td>
+                                <td class="price">R$ 311,92</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">205/55R16 91V DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 205/55R16...</td>
+                                <td class="price">R$ 343,33</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">205/60R16 92V DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 205/60R16...</td>
+                                <td class="price">R$ 354,55</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">215/60R16 95V DCO-Max</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 215/60R16...</td>
+                                <td class="price">R$ 369,14</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">215/60R17 96H DS66-</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 215/60R17...</td>
+                                <td class="price">R$ 450,89</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">225/45ZR17 XL 94W DC-100</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 225/45ZR17...</td>
+                                <td class="price">R$ 456,65</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">225/65R17 102H DS-66</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 225/65R17...</td>
+                                <td class="price">R$ 473,48</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">235/60ZR18 103W XL DS-66 HP</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 235/60ZR18...</td>
+                                <td class="price">R$ 540,12</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">235/60ZR18 107W XL DS-66 HP</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 235/60ZR18...</td>
+                                <td class="price">R$ 497,05</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">265/60R18 114T XL DS-AT+</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 265/60R18...</td>
+                                <td class="price">R$ 685,03</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="automotivo">
+                                <td class="product-code">265/60ZR18 110H DS-66 HP</td>
+                                <td class="product-desc">PNEU AUTOMOTIVO 265/60R18...</td>
+                                <td class="price">R$ 580,96</td>
+                                <td class="ipi">9,75</td>
+                            </tr>
+                            <tr data-category="caminhao">
+                                <td class="product-code">275/80R22.5-18 RLB210</td>
+                                <td class="product-desc">PNEU PARA CAMINHAO 275/80R22.5...</td>
+                                <td class="price">R$ 1.480,00</td>
+                                <td class="ipi">1,3</td>
+                            </tr>
+                            <tr data-category="caminhao">
+                                <td class="product-code">295/80R22.5-18 RLB451</td>
+                                <td class="product-desc">PNEU PARA CAMINHAO 295/80R22.5...</td>
+                                <td class="price">R$ 1.730,00</td>
+                                <td class="ipi">1,3</td>
+                            </tr>
+                            <tr data-category="caminhao">
+                                <td class="product-code">295/80R22.5-20 RR208</td>
+                                <td class="product-desc">PNEU PARA CAMINHAO 295/80R22.5...</td>
+                                <td class="price">R$ 1.520,00</td>
+                                <td class="ipi">1,3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-footer">
+                    <p>Preços sujeitos a alteração sem aviso prévio. Consulte-nos para condições especiais de pagamento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produtos Automotivos Section -->
+    <section class="produtos" id="automotivo">
+        <div class="container">
+            <div class="section-title">
+                <h2>Produtos Automotivos</h2>
+                <p>Tabela de Preço Automotivo 10-2025</p>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Produtos Automotivos</h3>
+                    <p>Tabela de Preço Automotivo 10-2025</p>
+                </div>
+                
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-automotivo" placeholder="Buscar por referência ou descrição...">
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="abraçadeiras">Abraçadeiras</button>
+                        <button class="filter-btn" data-filter="amortecedor">Amortecedor</button>
+                        <button class="filter-btn" data-filter="lampadas">Lâmpadas</button>
+                        <button class="filter-btn" data-filter="palhetas">Palhetas</button>
+                        <button class="filter-btn" data-filter="fusíveis">Fusíveis</button>
+                        <button class="filter-btn" data-filter="diversos">Diversos</button>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-ref">Referência</th>
+                                <th class="col-img">Imagem Ilustrativa</th>
+                                <th class="col-desc">Descrição Produtos</th>
+                                <th class="col-caixa">Caixa Máster</th>
+                                <th class="col-preco">Preço Venda</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ABRAÇADEIRAS -->
+                            <tr class="category-row">
+                                <td colspan="5">ABRAÇADEIRAS</td>
+                            </tr>
+                            <tr data-category="abraçadeiras">
+                                <td>LY25100/B</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Abraçadeira Branco 2.5X100 com 100 unidades. (Pacote)</td>
+                                <td>250 pacotes</td>
+                                <td class="price">R$ 5,22</td>
+                            </tr>
+                            <tr data-category="abraçadeiras">
+                                <td>LY23016</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Abraçadeira Branca 3.6X200 com 100 unidades. (Pacote)</td>
+                                <td>150 pacotes</td>
+                                <td class="price">R$ 7,92</td>
+                            </tr>
+                            <tr data-category="abraçadeiras">
+                                <td>LY23023</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Abraçadeira Branca 5.0X250 com 100 unidades. (Pacote)</td>
+                                <td>100 pacotes</td>
+                                <td class="price">R$ 17,28</td>
+                            </tr>
+                            <tr data-category="abraçadeiras">
+                                <td>LY23047Bra</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Abraçadeira Branca 5.0X400 com 100 unidades. (Pacote)</td>
+                                <td>50 pacotes</td>
+                                <td class="price">R$ 27,72</td>
+                            </tr>
+                            <tr data-category="abraçadeiras">
+                                <td>LY23030Bra</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Abraçadeira Branca 5.0X300 com 100 unidades. (Pacote)</td>
+                                <td>75 pacotes</td>
+                                <td class="price">R$ 21,60</td>
+                            </tr>
+                            
+                            <!-- AMORTECEDOR -->
+                            <tr class="category-row">
+                                <td colspan="5">AMORTECEDOR</td>
+                            </tr>
+                            <tr data-category="amortecedor">
+                                <td>BRX3012</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Amortecedor IPANEMA 89/98</td>
+                                <td></td>
+                                <td class="price">Consulte</td>
+                            </tr>
+                            <tr data-category="amortecedor">
+                                <td>LYX3014</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>AMORTECEDOR P/VEÍCULOS STILO 01</td>
+                                <td></td>
+                                <td class="price">Consulte</td>
+                            </tr>
+                            
+                            <!-- LÂMPADAS -->
+                            <tr class="category-row">
+                                <td colspan="5">LÂMPADAS</td>
+                            </tr>
+                            <tr data-category="lampadas">
+                                <td>LY26475</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Lampada Automotiva Led pinguinho T5 Painel carro</td>
+                                <td>Pacotes</td>
+                                <td class="price">R$ 14,40</td>
+                            </tr>
+                            <tr data-category="lampadas">
+                                <td>BRH58615</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Lâmpada Led 1Polo Chuveirinho 5Led</td>
+                                <td>208 Pares</td>
+                                <td class="price">R$ 3,60</td>
+                            </tr>
+                            
+                            <!-- PALHETAS -->
+                            <tr class="category-row">
+                                <td colspan="5">PALHETAS</td>
+                            </tr>
+                            <tr data-category="palhetas">
+                                <td>LY18814</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Palheta Universal carenada Universal 14"</td>
+                                <td>50 unidades</td>
+                                <td class="price">R$ 14,40</td>
+                            </tr>
+                            <tr data-category="palhetas">
+                                <td>LY18816</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Palheta Universal carenada Universal 16"</td>
+                                <td>50unidades</td>
+                                <td class="price">R$ 14,40</td>
+                            </tr>
+                            <tr data-category="palhetas">
+                                <td>LY18818</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Palheta Universal carenada Universal 18"</td>
+                                <td>50 unidades</td>
+                                <td class="price">R$ 14,40</td>
+                            </tr>
+                            
+                            <!-- FUSÍVEIS -->
+                            <tr class="category-row">
+                                <td colspan="5">FUSÍVEIS</td>
+                            </tr>
+                            <tr data-category="fusíveis">
+                                <td>26604</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Fusivel laminado médio 05/A com 100 unidades.</td>
+                                <td>100 Unidades</td>
+                                <td class="price">R$ 21,60</td>
+                            </tr>
+                            <tr data-category="fusíveis">
+                                <td>LY22989/10A</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Fusivel laminado médio 10A com 100 unidades.</td>
+                                <td>100 Unidades</td>
+                                <td class="price">R$ 21,60</td>
+                            </tr>
+                            
+                            <!-- DIVERSOS -->
+                            <tr class="category-row">
+                                <td colspan="5">DIVERSOS</td>
+                            </tr>
+                            <tr data-category="diversos">
+                                <td>LY-25720</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Mini Compressor Automotivo Portátil corpo em alumínio 10 amp/100pcs</td>
+                                <td>16 Unidades</td>
+                                <td class="price">R$ 144,00</td>
+                            </tr>
+                            <tr data-category="diversos">
+                                <td>LY-25713</td>
+                                <td><div class="img-placeholder">Sem Imagem</div></td>
+                                <td>Aspirador Portátil 60w</td>
+                                <td>20 Unidades</td>
+                                <td class="price">R$ 54,00</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-footer">
+                    <p>Preços sujeitos a alteração sem aviso prévio. Consulte-nos para condições especiais de pagamento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contato">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>ECO.SHOP</h3>
+                    <p>A melhor opção em peças e acessórios automotivos com qualidade e preço justo.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-mercadolibre"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#inicio">Início</a></li>
+                        <li><a href="#pneus">Pneus Double Coin</a></li>
+                        <li><a href="#automotivo">Produtos Automotivos</a></li>
+                        <li><a href="#vantagens">Vantagens</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Categorias</h3>
+                    <ul>
+                        <li><a href="#">Sistema de Freio</a></li>
+                        <li><a href="#">Suspensão</a></li>
+                        <li><a href="#">Motor</a></li>
+                        <li><a href="#">Elétrica</a></li>
+                        <li><a href="#">Pneus</a></li>
+                        <li><a href="#">Acessórios</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+                        <li><i class="fas fa-phone"></i> (11) 9999-9999</li>
+                        <li><i class="fas fa-envelope"></i> contato@ecoshop.com.br</li>
+                        <li><i class="fab fa-mercadolibre"></i> <a href="#">Nossa Loja no ML</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 ECO.SHOP - Peças e Acessórios Automotivos. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Price table filtering and search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pneus table
+            const searchPneus = document.getElementById('search-pneus');
+            const filterButtonsPneus = document.querySelectorAll('#pneus .filter-btn');
+            const tableRowsPneus = document.querySelectorAll('#pneus tbody tr');
+            
+            // Search functionality for pneus
+            searchPneus.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                tableRowsPneus.forEach(row => {
+                    if (row.classList.contains('category-row')) return;
+                    
+                    const code = row.querySelector('.product-code').textContent.toLowerCase();
+                    const desc = row.querySelector('.product-desc').textContent.toLowerCase();
+                    
+                    if (code.includes(searchTerm) || desc.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Filter functionality for pneus
+            filterButtonsPneus.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Update active button
+                    filterButtonsPneus.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter rows
+                    tableRowsPneus.forEach(row => {
+                        if (row.classList.contains('category-row')) return;
+                        
+                        const category = row.getAttribute('data-category');
+                        
+                        if (filter === 'all' || category === filter) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Automotivo table
+            const searchAutomotivo = document.getElementById('search-automotivo');
+            const filterButtonsAutomotivo = document.querySelectorAll('#automotivo .filter-btn');
+            const tableRowsAutomotivo = document.querySelectorAll('#automotivo tbody tr');
+            
+            // Search functionality for automotivo
+            searchAutomotivo.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                tableRowsAutomotivo.forEach(row => {
+                    if (row.classList.contains('category-row')) return;
+                    
+                    const code = row.cells[0].textContent.toLowerCase();
+                    const desc = row.cells[2].textContent.toLowerCase();
+                    
+                    if (code.includes(searchTerm) || desc.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Filter functionality for automotivo
+            filterButtonsAutomotivo.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Update active button
+                    filterButtonsAutomotivo.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter rows
+                    tableRowsAutomotivo.forEach(row => {
+                        if (row.classList.contains('category-row')) {
+                            // Show all category rows
+                            row.style.display = '';
+                        } else {
+                            const category = row.getAttribute('data-category');
+                            
+                            if (filter === 'all' || category === filter) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
