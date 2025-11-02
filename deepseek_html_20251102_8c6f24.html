@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECO.MAPS - Sistema de Rotas Portuárias</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* Painel lateral */
+        .sidebar {
+            width: 380px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 25px rgba(0, 255, 255, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        
+        .logo i {
+            font-size: 32px;
+            color: #00ffff;
+            margin-right: 12px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00ffff, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo span {
+            color: #00ffff;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            background: rgba(30, 30, 30, 0.8);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00ffff;
+        }
+        
+        .route-controls {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .route-controls h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #00ffff;
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .route-controls h3 i {
+            margin-right: 8px;
+        }
+        
+        .select-group {
+            margin-bottom: 15px;
+        }
+        
+        .select-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .select-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            background: rgba(40, 40, 40, 0.8);
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .select-group select:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .route-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #0a0a0a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .action-btn.secondary {
+            background: rgba(60, 60, 60, 0.8);
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .action-btn.secondary:hover {
+            background: rgba(80, 80, 80, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .ports-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .ports-list h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #00ffff;
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .ports-list h3 i {
+            margin-right: 8px;
+        }
+        
+        .port-item {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .port-item:hover {
+            background: rgba(50, 50, 50, 0.8);
+            border-left: 3px solid #00ffff;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .port-item.active {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 3px solid #00ffff;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .port-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .port-name i {
+            margin-right: 8px;
+            color: #00ffff;
+        }
+        
+        .port-location {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        
+        .port-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #ccc;
+        }
+        
+        /* Mapa */
+        .map-container {
+            flex-grow: 1;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+            filter: brightness(0.9) contrast(1.1) saturate(1.2);
+        }
+        
+        /* Controles do mapa */
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #00ffff;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(30, 30, 30, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
+        }
+        
+        /* Informações da rota */
+        .route-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 350px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.5s ease;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        
+        .route-info.active {
+            transform: translateY(0);
+        }
+        
+        .route-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        
+        .route-info h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #00ffff;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #00ffff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .route-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #00ffff;
+            margin-bottom: 5px;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .route-description {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #ccc;
+            padding: 10px;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 8px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        /* Estilo para a legenda */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            max-width: 200px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .legend h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #00ffff;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 10px;
+            margin-right: 10px;
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+        
+        .legend-label {
+            font-size: 13px;
+            color: #ccc;
+        }
+        
+        /* Efeitos de animação para rotas */
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: 40%;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                z-index: 1001;
+                transform: translateY(100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateY(0);
+            }
+            
+            .map-container {
+                height: 100%;
+            }
+            
+            .toggle-sidebar {
+                display: block;
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1002;
+            }
+        }
+        
+        .toggle-sidebar {
+            display: none;
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s;
+        }
+        
+        .toggle-sidebar:hover {
+            transform: translateY(-3px) rotate(90deg);
+        }
+        
+        /* Animações de loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ffff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Efeito de partículas para rotas */
+        .route-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #00ffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 0 10px #00ffff;
+            animation: float 3s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(20px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Painel Lateral -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-ship"></i>
+                <h1>ECO.<span>MAPS</span></h1>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Buscar portos ou rotas...">
+            </div>
+            
+            <div class="route-controls">
+                <h3><i class="fas fa-route"></i> Planejador de Rotas</h3>
+                
+                <div class="select-group">
+                    <label for="origin-port">Porto de Origem</label>
+                    <select id="origin-port">
+                        <option value="">Selecione um porto</option>
+                        <option value="1">Porto de Santos (BR)</option>
+                        <option value="2">Porto de Rotterdam (NL)</option>
+                        <option value="3">Porto de Xangai (CN)</option>
+                        <option value="4">Porto de Singapore (SG)</option>
+                        <option value="5">Porto de Los Angeles (US)</option>
+                    </select>
+                </div>
+                
+                <div class="select-group">
+                    <label for="destination-port">Porto de Destino</label>
+                    <select id="destination-port">
+                        <option value="">Selecione um porto</option>
+                        <option value="2">Porto de Rotterdam (NL)</option>
+                        <option value="1">Porto de Santos (BR)</option>
+                        <option value="3">Porto de Xangai (CN)</option>
+                        <option value="4">Porto de Singapore (SG)</option>
+                        <option value="5">Porto de Los Angeles (US)</option>
+                    </select>
+                </div>
+                
+                <div class="route-actions">
+                    <button class="action-btn" id="calculate-route">
+                        <i class="fas fa-route"></i> Calcular Rota
+                    </button>
+                    <button class="action-btn secondary" id="clear-route">
+                        <i class="fas fa-trash"></i> Limpar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="ports-list">
+                <h3><i class="fas fa-anchor"></i> Portos Principais</h3>
+                <div id="ports-container">
+                    <!-- Portos serão inseridos aqui via JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mapa -->
+        <div class="map-container">
+            <div id="map"></div>
+            
+            <div class="map-controls">
+                <button class="control-btn" id="zoom-in">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="control-btn" id="zoom-out">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="control-btn" id="locate-me">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+                <button class="control-btn" id="toggle-satellite">
+                    <i class="fas fa-satellite"></i>
+                </button>
+            </div>
+            
+            <!-- Informações da Rota -->
+            <div class="route-info" id="route-info">
+                <div class="route-info-header">
+                    <div>
+                        <h2 id="route-name">Rota Portuária</h2>
+                        <div id="route-ports">Porto de Santos → Porto de Rotterdam</div>
+                    </div>
+                    <button class="close-btn" id="close-info">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="route-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="route-distance">8,200 km</div>
+                        <div class="stat-label">Distância</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="route-duration">18 dias</div>
+                        <div class="stat-label">Duração</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="route-fuel">1,240 t</div>
+                        <div class="stat-label">Consumo de Combustível</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="route-co2">3,890 t</div>
+                        <div class="stat-label">Emissões de CO₂</div>
+                    </div>
+                </div>
+                
+                <div class="route-description" id="route-description">
+                    Rota marítima principal entre América do Sul e Europa, passando pelo Atlântico Norte. Esta rota é frequentemente utilizada para transporte de commodities como soja, minério de ferro e produtos manufaturados.
+                </div>
+            </div>
+            
+            <!-- Legenda -->
+            <div class="legend">
+                <h3>Legenda</h3>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #00ffff; box-shadow: 0 0 10px #00ffff;"></div>
+                    <div class="legend-label">Portos Principais</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff00ff; box-shadow: 0 0 10px #ff00ff;"></div>
+                    <div class="legend-label">Rotas Ativas</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #00ff00; box-shadow: 0 0 10px #00ff00;"></div>
+                    <div class="legend-label">Rotas em Planejamento</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="toggle-sidebar" id="toggle-sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Inicialização do mapa
+        const map = L.map('map').setView([20, 0], 2);
+        
+        // Camadas do mapa com tema escuro
+        const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        });
+        
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        
+        // Adicionar camada padrão
+        darkLayer.addTo(map);
+        let isSatelliteView = false;
+        
+        // Dados de portos (simulados)
+        const ports = [
+            {
+                id: 1,
+                name: "Porto de Santos",
+                country: "Brasil",
+                code: "BRSSZ",
+                lat: -23.9608,
+                lng: -46.3332,
+                description: "Maior porto da América Latina, localizado no litoral do estado de São Paulo.",
+                capacity: "120 milhões de toneladas/ano",
+                routes: [2, 3, 5]
+            },
+            {
+                id: 2,
+                name: "Porto de Rotterdam",
+                country: "Holanda",
+                code: "NLRTM",
+                lat: 51.8850,
+                lng: 4.2690,
+                description: "Maior porto da Europa, situado na foz do rio Reno.",
+                capacity: "470 milhões de toneladas/ano",
+                routes: [1, 3, 4]
+            },
+            {
+                id: 3,
+                name: "Porto de Xangai",
+                country: "China",
+                code: "CNSHA",
+                lat: 31.2304,
+                lng: 121.4737,
+                description: "Porto mais movimentado do mundo em termos de tonelagem de carga.",
+                capacity: "650 milhões de toneladas/ano",
+                routes: [1, 2, 4, 5]
+            },
+            {
+                id: 4,
+                name: "Porto de Singapore",
+                country: "Singapura",
+                code: "SGSIN",
+                lat: 1.3521,
+                lng: 103.8198,
+                description: "Segundo porto mais movimentado do mundo, centro de transbordo global.",
+                capacity: "600 milhões de toneladas/ano",
+                routes: [2, 3, 5]
+            },
+            {
+                id: 5,
+                name: "Porto de Los Angeles",
+                country: "Estados Unidos",
+                code: "USLAX",
+                lat: 33.7542,
+                lng: -118.2160,
+                description: "Maior porto dos EUA, principal gateway para o comércio com a Ásia.",
+                capacity: "200 milhões de toneladas/ano",
+                routes: [1, 3, 4]
+            },
+            {
+                id: 6,
+                name: "Porto de Hamburgo",
+                country: "Alemanha",
+                code: "DEHAM",
+                lat: 53.5511,
+                lng: 9.9937,
+                description: "Terceiro maior porto da Europa, conhecido como 'Porta para o Mundo'.",
+                capacity: "130 milhões de toneladas/ano",
+                routes: [2, 4]
+            },
+            {
+                id: 7,
+                name: "Porto de Durban",
+                country: "África do Sul",
+                code: "ZADUR",
+                lat: -29.8587,
+                lng: 31.0218,
+                description: "Maior porto da África, localizado na costa leste da África do Sul.",
+                capacity: "80 milhões de toneladas/ano",
+                routes: [2, 4]
+            },
+            {
+                id: 8,
+                name: "Porto de Sydney",
+                country: "Austrália",
+                code: "AUSYD",
+                lat: -33.8688,
+                lng: 151.2093,
+                description: "Principal porto da Austrália, situado na baía de Sydney.",
+                capacity: "35 milhões de toneladas/ano",
+                routes: [3, 4, 5]
+            }
+        ];
+        
+        // Dados de rotas (simulados)
+        const routes = [
+            {
+                id: 1,
+                name: "Rota Brasil-Europa",
+                origin: 1,
+                destination: 2,
+                distance: 8200,
+                duration: 18,
+                fuel: 1240,
+                co2: 3890,
+                description: "Rota marítima principal entre América do Sul e Europa, passando pelo Atlântico Norte. Esta rota é frequentemente utilizada para transporte de commodities como soja, minério de ferro e produtos manufaturados."
+            },
+            {
+                id: 2,
+                name: "Rota Europa-Ásia",
+                origin: 2,
+                destination: 3,
+                distance: 12500,
+                duration: 28,
+                fuel: 2100,
+                co2: 6500,
+                description: "Rota que conecta a Europa à Ásia através do Canal de Suez. É uma das rotas comerciais mais movimentadas do mundo."
+            },
+            {
+                id: 3,
+                name: "Rota Ásia-América",
+                origin: 3,
+                destination: 5,
+                distance: 10500,
+                duration: 22,
+                fuel: 1800,
+                co2: 5600,
+                description: "Rota trans-Pacífico que conecta a Ásia à costa oeste da América do Norte. Principal rota para contêineres e produtos eletrônicos."
+            },
+            {
+                id: 4,
+                name: "Rota Ásia-Singapura",
+                origin: 3,
+                destination: 4,
+                distance: 3800,
+                duration: 8,
+                fuel: 600,
+                co2: 1850,
+                description: "Rota estratégica no sudeste asiático, com Singapura funcionando como hub de transbordo para toda a região."
+            },
+            {
+                id: 5,
+                name: "Rota América-Singapura",
+                origin: 5,
+                destination: 4,
+                distance: 14200,
+                duration: 30,
+                fuel: 2400,
+                co2: 7500,
+                description: "Rota transpacífico que conecta a América do Norte ao sudeste asiático, passando pelo Havaí."
+            }
+        ];
+        
+        // Marcadores no mapa
+        const markers = [];
+        let activeRoute = null;
+        let routeLayer = null;
+        let routeAnimation = null;
+        
+        // Ícones para portos com efeito neon
+        const portIcon = L.divIcon({
+            html: '<i class="fas fa-anchor" style="text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;"></i>',
+            iconSize: [30, 30],
+            className: 'port-marker'
+        });
+        
+        // Adicionar marcadores de portos ao mapa
+        ports.forEach(port => {
+            const marker = L.marker([port.lat, port.lng], { icon: portIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="popup-content" style="background: rgba(20,20,20,0.9); color: white; border: 1px solid #00ffff; border-radius: 10px; padding: 10px;">
+                        <h3 style="color: #00ffff; margin-bottom: 5px;">${port.name}</h3>
+                        <p>${port.country} - ${port.code}</p>
+                        <p>Capacidade: ${port.capacity}</p>
+                        <button class="popup-btn" data-id="${port.id}" style="background: linear-gradient(135deg, #00ffff, #0099cc); border: none; border-radius: 5px; padding: 8px; color: #0a0a0a; font-weight: bold; width: 100%; margin-top: 10px; cursor: pointer;">Ver Rotas</button>
+                    </div>
+                `);
+            
+            marker.portId = port.id;
+            markers.push(marker);
+            
+            // Evento de clique no marcador
+            marker.on('click', function() {
+                showPortInfo(port.id);
+            });
+        });
+        
+        // Preencher lista de portos
+        function renderPortsList() {
+            const container = document.getElementById('ports-container');
+            container.innerHTML = '';
+            
+            ports.forEach(port => {
+                const portElement = document.createElement('div');
+                portElement.className = 'port-item';
+                portElement.dataset.id = port.id;
+                
+                portElement.innerHTML = `
+                    <div class="port-name">
+                        <i class="fas fa-anchor"></i>
+                        ${port.name}
+                    </div>
+                    <div class="port-location">${port.country} - ${port.code}</div>
+                    <div class="port-details">
+                        <span>${port.capacity}</span>
+                        <span>${port.routes.length} rotas</span>
+                    </div>
+                `;
+                
+                portElement.addEventListener('click', () => {
+                    showPortInfo(port.id);
+                    // Destacar o item na lista
+                    document.querySelectorAll('.port-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    portElement.classList.add('active');
+                });
+                
+                container.appendChild(portElement);
+            });
+        }
+        
+        // Mostrar informações do porto
+        function showPortInfo(portId) {
+            const port = ports.find(p => p.id === portId);
+            if (!port) return;
+            
+            // Centralizar mapa no porto
+            map.setView([port.lat, port.lng], 7);
+            
+            // Abrir popup do marcador
+            markers.forEach(marker => {
+                if (marker.portId === portId) {
+                    marker.openPopup();
+                }
+            });
+        }
+        
+        // Calcular rota entre portos
+        function calculateRoute(originId, destinationId) {
+            const origin = ports.find(p => p.id === originId);
+            const destination = ports.find(p => p.id === destinationId);
+            
+            if (!origin || !destination) {
+                alert('Selecione portos de origem e destino válidos.');
+                return;
+            }
+            
+            // Limpar rota anterior
+            if (routeLayer) {
+                map.removeLayer(routeLayer);
+            }
+            
+            // Parar animação anterior
+            if (routeAnimation) {
+                clearInterval(routeAnimation);
+            }
+            
+            // Encontrar rota pré-definida ou criar uma genérica
+            let route = routes.find(r => 
+                (r.origin === originId && r.destination === destinationId) ||
+                (r.origin === destinationId && r.destination === originId)
+            );
+            
+            if (!route) {
+                // Criar uma rota genérica se não existir uma pré-definida
+                const distance = calculateDistance(origin.lat, origin.lng, destination.lat, destination.lng);
+                route = {
+                    id: 999,
+                    name: `Rota ${origin.name} → ${destination.name}`,
+                    origin: originId,
+                    destination: destinationId,
+                    distance: Math.round(distance),
+                    duration: Math.round(distance / 450), // Estimativa: 450 km/dia
+                    fuel: Math.round(distance * 0.15), // Estimativa: 0.15 t/km
+                    co2: Math.round(distance * 0.47), // Estimativa: 0.47 t/km
+                    description: `Rota marítima entre ${origin.name} (${origin.country}) e ${destination.name} (${destination.country}).`
+                };
+            }
+            
+            // Desenhar rota no mapa com efeito neon
+            routeLayer = L.polyline([
+                [origin.lat, origin.lng],
+                [destination.lat, destination.lng]
+            ], {
+                color: '#ff00ff',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '10, 10',
+                className: 'glowing-route'
+            }).addTo(map);
+            
+            // Adicionar efeito de pulso à rota
+            routeLayer.getElement().style.animation = 'pulse 2s infinite, glow 3s infinite';
+            
+            // Ajustar visualização para mostrar a rota completa
+            const bounds = [
+                [origin.lat, origin.lng],
+                [destination.lat, destination.lng]
+            ];
+            map.fitBounds(bounds, { padding: [50, 50] });
+            
+            // Adicionar animação de partículas ao longo da rota
+            animateRoute(origin, destination);
+            
+            // Mostrar informações da rota
+            showRouteInfo(route);
+            
+            activeRoute = route;
+        }
+        
+        // Animação de partículas ao longo da rota
+        function animateRoute(origin, destination) {
+            const mapContainer = document.getElementById('map');
+            const numParticles = 30;
+            
+            routeAnimation = setInterval(() => {
+                for (let i = 0; i < numParticles; i++) {
+                    setTimeout(() => {
+                        const progress = Math.random();
+                        const lat = origin.lat + (destination.lat - origin.lat) * progress;
+                        const lng = origin.lng + (destination.lng - origin.lng) * progress;
+                        
+                        const point = map.latLngToContainerPoint([lat, lng]);
+                        
+                        const particle = document.createElement('div');
+                        particle.className = 'route-particle';
+                        particle.style.left = point.x + 'px';
+                        particle.style.top = point.y + 'px';
+                        
+                        mapContainer.appendChild(particle);
+                        
+                        // Remover partícula após animação
+                        setTimeout(() => {
+                            if (particle.parentNode) {
+                                particle.parentNode.removeChild(particle);
+                            }
+                        }, 3000);
+                    }, i * 100);
+                }
+            }, 1000);
+        }
+        
+        // Calcular distância entre dois pontos (fórmula de Haversine)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Raio da Terra em km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Mostrar informações da rota
+        function showRouteInfo(route) {
+            const origin = ports.find(p => p.id === route.origin);
+            const destination = ports.find(p => p.id === route.destination);
+            
+            // Atualizar informações no painel
+            document.getElementById('route-name').textContent = route.name;
+            document.getElementById('route-ports').textContent = `${origin.name} → ${destination.name}`;
+            document.getElementById('route-distance').textContent = `${route.distance.toLocaleString()} km`;
+            document.getElementById('route-duration').textContent = `${route.duration} dias`;
+            document.getElementById('route-fuel').textContent = `${route.fuel.toLocaleString()} t`;
+            document.getElementById('route-co2').textContent = `${route.co2.toLocaleString()} t`;
+            document.getElementById('route-description').textContent = route.description;
+            
+            // Mostrar painel de informações
+            document.getElementById('route-info').classList.add('active');
+        }
+        
+        // Limpar rota
+        function clearRoute() {
+            if (routeLayer) {
+                map.removeLayer(routeLayer);
+                routeLayer = null;
+            }
+            
+            if (routeAnimation) {
+                clearInterval(routeAnimation);
+                routeAnimation = null;
+            }
+            
+            document.getElementById('route-info').classList.remove('active');
+            activeRoute = null;
+            
+            // Limpar seleções
+            document.getElementById('origin-port').value = '';
+            document.getElementById('destination-port').value = '';
+            
+            // Remover todas as partículas
+            const particles = document.querySelectorAll('.route-particle');
+            particles.forEach(particle => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            });
+        }
+        
+        // Event Listeners
+        document.getElementById('calculate-route').addEventListener('click', function() {
+            const originId = parseInt(document.getElementById('origin-port').value);
+            const destinationId = parseInt(document.getElementById('destination-port').value);
+            
+            if (!originId || !destinationId) {
+                alert('Selecione portos de origem e destino.');
+                return;
+            }
+            
+            if (originId === destinationId) {
+                alert('Os portos de origem e destino devem ser diferentes.');
+                return;
+            }
+            
+            calculateRoute(originId, destinationId);
+        });
+        
+        document.getElementById('clear-route').addEventListener('click', clearRoute);
+        
+        document.getElementById('close-info').addEventListener('click', function() {
+            document.getElementById('route-info').classList.remove('active');
+        });
+        
+        // Buscar portos
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            
+            if (query.length < 2) {
+                renderPortsList();
+                return;
+            }
+            
+            const filteredPorts = ports.filter(port => 
+                port.name.toLowerCase().includes(query) || 
+                port.country.toLowerCase().includes(query) ||
+                port.code.toLowerCase().includes(query)
+            );
+            
+            const container = document.getElementById('ports-container');
+            container.innerHTML = '';
+            
+            filteredPorts.forEach(port => {
+                const portElement = document.createElement('div');
+                portElement.className = 'port-item';
+                portElement.dataset.id = port.id;
+                
+                portElement.innerHTML = `
+                    <div class="port-name">
+                        <i class="fas fa-anchor"></i>
+                        ${port.name}
+                    </div>
+                    <div class="port-location">${port.country} - ${port.code}</div>
+                    <div class="port-details">
+                        <span>${port.capacity}</span>
+                        <span>${port.routes.length} rotas</span>
+                    </div>
+                `;
+                
+                portElement.addEventListener('click', () => {
+                    showPortInfo(port.id);
+                });
+                
+                container.appendChild(portElement);
+            });
+        });
+        
+        // Controles do mapa
+        document.getElementById('zoom-in').addEventListener('click', function() {
+            map.zoomIn();
+        });
+        
+        document.getElementById('zoom-out').addEventListener('click', function() {
+            map.zoomOut();
+        });
+        
+        document.getElementById('locate-me').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setView([latitude, longitude], 10);
+                });
+            } else {
+                alert('Geolocalização não é suportada por este navegador.');
+            }
+        });
+        
+        document.getElementById('toggle-satellite').addEventListener('click', function() {
+            if (isSatelliteView) {
+                map.removeLayer(satelliteLayer);
+                map.addLayer(darkLayer);
+                isSatelliteView = false;
+            } else {
+                map.removeLayer(darkLayer);
+                map.addLayer(satelliteLayer);
+                isSatelliteView = true;
+            }
+        });
+        
+        // Inicializar lista de portos
+        renderPortsList();
+        
+        // Estilos CSS para os marcadores
+        const style = document.createElement('style');
+        style.textContent = `
+            .port-marker {
+                background: rgba(0, 255, 255, 0.2);
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+                border: 2px solid #00ffff;
+                animation: pulse 2s infinite;
+            }
+            
+            .port-marker i {
+                color: #00ffff;
+                font-size: 14px;
+            }
+            
+            .glowing-route {
+                filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.7));
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
